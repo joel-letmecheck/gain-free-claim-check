@@ -1,0 +1,95 @@
+/* Gain Lawyers Free Claim Check - Styling
+   Pair with gain-claim-check.js. Mirrors the Compensation Calculator look (olive / cream / sage). */
+
+.gain-claim-check{
+  --gcc-olive:#365E32;--gcc-olive-d:#274621;--gcc-sage:#7ABA78;--gcc-sage-bg:#F0F5EF;--gcc-cream:#F5F1E6;--gcc-line:#d8d2bf;--gcc-err:#C0392B;
+  max-width:720px;margin:0 auto;padding:32px;box-sizing:border-box;
+  font-family:"Graphik",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  color:#333;line-height:1.5;background:var(--gcc-cream);border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,.1);
+}
+.gain-claim-check *,.gain-claim-check *::before,.gain-claim-check *::after{box-sizing:border-box}
+.gcc-body{background:#fff;padding:28px 32px;border-radius:8px;border:1px solid #e0e0e0;box-shadow:0 2px 6px rgba(0,0,0,.04)}
+
+/* Header / footer */
+.gcc-header{text-align:center;margin-bottom:20px}
+.gcc-title{margin:0;font-size:22px;color:var(--gcc-olive);font-weight:600;letter-spacing:-.01em;font-family:"All Round Gothic","Graphik",-apple-system,BlinkMacSystemFont,sans-serif}
+.gcc-sub{margin:4px 0 0;font-size:13px;color:#666}
+.gcc-disclaimer{text-align:center;margin:14px 0 0;font-size:11px;color:#888}
+
+/* Progress */
+.gcc-progress{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.gcc-pstep{flex:0 0 auto;text-align:center}
+.gcc-pdot{width:28px;height:28px;border-radius:50%;margin:0 auto;display:flex;align-items:center;justify-content:center;background:var(--gcc-line);color:#888;font-size:12px;font-weight:600;transition:background .2s}
+.gcc-pa .gcc-pdot,.gcc-pd .gcc-pdot{background:var(--gcc-sage);color:#fff}
+.gcc-plabel{font-size:10px;margin-top:4px;color:#888}
+.gcc-pa .gcc-plabel{color:var(--gcc-olive);font-weight:600}
+.gcc-pline{flex:1;height:2px;margin:0 4px 20px;background:var(--gcc-line)}
+.gcc-pline.gcc-pd{background:var(--gcc-sage)}
+
+/* Headings / text */
+.gcc-h{margin:0 0 8px;font-size:20px;line-height:1.3;color:var(--gcc-olive);font-weight:600;letter-spacing:-.01em;font-family:"All Round Gothic","Graphik",-apple-system,BlinkMacSystemFont,sans-serif}
+.gcc-h:focus{outline:none}
+.gcc-intro,.gcc-help{margin:0 0 20px;font-size:14px;color:#666}
+.gcc-help{margin:0 0 14px;font-size:13px;color:#888}
+.gcc-info p{margin:0 0 14px;font-size:14px;color:#555;line-height:1.6}
+.gcc-info a,.gcc-fine a,.gcc-intro a{color:var(--gcc-olive);font-weight:500}
+.gcc-fine{margin:16px 0 0;font-size:12px;color:#888;text-align:center}
+
+/* Option cards */
+.gcc-opts,.gcc-times{display:flex;flex-direction:column}
+.gcc-times{flex-direction:row;gap:8px;flex-wrap:wrap}
+.gcc-times .gcc-opt{flex:1 1 0;margin-bottom:0;justify-content:center;min-width:100px}
+.gcc-opt{display:flex;align-items:center;gap:10px;padding:12px 14px;margin-bottom:8px;border:2px solid #ddd;background:#fff;border-radius:6px;cursor:pointer;transition:all .15s}
+.gcc-opt:hover{border-color:#aaa}
+.gcc-opt-sel{border-color:var(--gcc-sage);background:var(--gcc-sage-bg)}
+.gcc-opt:focus-within{box-shadow:0 0 0 3px rgba(54,94,50,.25)}
+.gcc-opt input{flex:0 0 auto;cursor:pointer;accent-color:var(--gcc-olive)}
+.gcc-opt-l{font-size:14px;font-weight:500;color:#333}
+
+/* Inline legal notes */
+.gcc-notes:empty{display:none}
+.gcc-notes{margin-top:16px}
+.gcc-note{margin:0 0 10px;padding:12px 14px;background:#FFFAE0;border-left:4px solid #F39C12;border-radius:0 6px 6px 0;font-size:13px;color:#6b5410;line-height:1.55}
+
+/* Form */
+.gcc-fg{margin-bottom:18px}
+.gcc-label{display:block;font-size:14px;font-weight:500;margin-bottom:6px;color:#333}
+.gcc-opt-tag{font-weight:400;color:#888;font-size:12px}
+.gcc-input{width:100%;padding:10px 12px;border:1px solid #ccc;border-radius:6px;font-size:16px;font-family:inherit;background:#fff;color:#333}
+.gcc-input:focus{outline:none;border-color:var(--gcc-olive);box-shadow:0 0 0 2px rgba(54,94,50,.15)}
+.gcc-input-err{border-color:var(--gcc-err)}
+textarea.gcc-input{resize:vertical}
+.gcc-err{margin:4px 0 0;font-size:12px;color:var(--gcc-err);font-weight:500}
+.gcc-hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+
+/* Summary */
+.gcc-sum{background:var(--gcc-sage-bg);padding:14px 18px;border-radius:6px;margin-bottom:22px;font-size:13px}
+.gcc-sum h4{margin:0 0 8px;color:var(--gcc-olive);font-size:14px}
+.gcc-sum dl{margin:0}
+.gcc-sum dt{color:#777;font-size:12px;margin-top:8px}
+.gcc-sum dd{margin:0;font-weight:500;color:#333}
+
+/* Buttons */
+.gcc-nav{display:flex;justify-content:space-between;gap:12px;margin-top:26px;padding-top:20px;border-top:1px solid #eee}
+.gcc-btn-next,.gcc-btn-cta,.gcc-btn-back{font-family:inherit;border-radius:6px;cursor:pointer}
+.gcc-btn-next{padding:10px 22px;font-size:14px;font-weight:600;background:var(--gcc-olive);color:#fff;border:none}
+.gcc-btn-cta{display:inline-block;padding:14px 28px;font-size:16px;font-weight:600;background:var(--gcc-olive);color:#fff;border:none;text-decoration:none;letter-spacing:.01em}
+.gcc-btn-next:hover,.gcc-btn-cta:hover{background:var(--gcc-olive-d);color:#fff}
+.gcc-btn-cta:disabled{opacity:.6;cursor:wait}
+.gcc-btn-back{padding:10px 18px;font-size:14px;font-weight:500;background:#fff;color:var(--gcc-olive);border:1.5px solid var(--gcc-olive)}
+.gcc-btn-back:hover{background:var(--gcc-cream)}
+.gcc-btn-back:disabled{color:#bbb;border-color:#ddd;cursor:not-allowed;background:#fff}
+.gcc-btn-next:focus-visible,.gcc-btn-cta:focus-visible,.gcc-btn-back:focus-visible{outline:3px solid rgba(54,94,50,.4);outline-offset:2px}
+.gcc-done{text-align:center;padding:12px 0}
+.gcc-done .gcc-info{text-align:left}
+
+@media (max-width:600px){
+  .gain-claim-check{padding:12px}
+  .gcc-body{padding:20px}
+  .gcc-h{font-size:18px}
+  .gcc-btn-next,.gcc-btn-back{padding:10px 14px;font-size:13px}
+  .gcc-btn-cta{padding:14px 18px;font-size:15px}
+  .gcc-times{flex-direction:column}
+  .gcc-plabel{display:none}
+  .gcc-pdot{width:24px;height:24px;font-size:11px}
+}

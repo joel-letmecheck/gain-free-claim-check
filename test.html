@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><title>Free Claim Check - local test</title>
+<link rel="stylesheet" href="gain-claim-check.css">
+<style>body{font-family:sans-serif;background:#fff;padding:24px}nav a{margin-right:12px}</style></head>
+<body>
+<nav id="nav"></nav>
+<div id="gain-claim-check" data-flow="motor-vehicle" data-endpoint="http://localhost:9/none"></div>
+<script>
+var f=new URLSearchParams(location.search).get('flow')||'motor-vehicle';
+document.getElementById('gain-claim-check').setAttribute('data-flow',f);
+document.getElementById('nav').innerHTML=['motor-vehicle','workers-compensation','public-liability','medical-negligence','abuse','other'].map(function(x){return '<a href="?flow='+x+'">'+x+'</a>';}).join('');
+</script>
+<script src="gain-claim-check.js"></script>
+</body></html>
