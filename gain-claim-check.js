@@ -2,7 +2,8 @@
    (c) 2026 Gain Lawyers Pty Ltd. All rights reserved.
    One script for all flows. Usage:
    <div id="gain-claim-check" data-flow="motor-vehicle"></div>
-   Optional: data-endpoint="https://..." overrides the submission endpoint. */
+   data-webflow-form="id" points at a hidden native Webflow form (default:
+   gcc-webflow-form). Fallback: POSTs to data-endpoint or ENDPOINT constant. */
 (function(){
 'use strict';
 
@@ -222,13 +223,39 @@ function payload(){
   qsteps().forEach(function(q){if(S.ans[q.id]!=null)a[q.id]={question:q.q,value:S.ans[q.id],label:q.multi?labels(q):labels(q)[0]};});
   return{flow:flowKey,answers:a,routedOut:routedOut(),fullName:f.name.trim(),phone:f.phone.trim(),email:f.email.trim(),callbackTime:f.time,note:f.note.trim(),story:f.story.trim(),timestamp:new Date().toISOString(),pageUrl:location.href,website:f.website};
 }
+function summaryText(){
+  return answered().map(function(q){return q.q+' '+labels(q).join(', ');}).join('\n');
+}
+// Primary path: fill a hidden native Webflow form and submit it, so Webflow
+// stores the lead and sends the notification email. The form lives in the
+// Designer; its element ID is set via data-webflow-form (default gcc-webflow-form).
+function webflowSubmit(){
+  var wf=document.getElementById(root.getAttribute('data-webflow-form')||'gcc-webflow-form');
+  if(!wf)return false;
+  var f=S.form,v={
+    name:f.name.trim(),phone:f.phone.trim(),email:f.email.trim(),
+    'callback-time':f.time,note:f.note.trim(),story:f.story.trim(),
+    flow:flowKey,'routed-out':routedOut()?'yes':'no',
+    summary:summaryText(),timestamp:new Date().toISOString(),'page-url':location.href
+  };
+  var fields=wf.querySelectorAll('input[name],textarea[name],select[name]');
+  for(var i=0;i<fields.length;i++){
+    var n=fields[i].getAttribute('name');
+    if(v[n]!=null)fields[i].value=v[n];
+  }
+  if(wf.requestSubmit)wf.requestSubmit();
+  else{var b=wf.querySelector('input[type=submit],button[type=submit]');if(b)b.click();else wf.submit();}
+  return true;
+}
 function submit(){
   S.ferr=validateForm();S.subErr='';
   if(Object.keys(S.ferr).length){render('[aria-invalid="true"],.gcc-input-err');return;}
+  S.first=S.form.name.trim().split(/\s+/)[0];
+  if(webflowSubmit()){go('done');return;}
   S.sending=true;render();
   var ctl=window.AbortController?new AbortController():null,t=setTimeout(function(){if(ctl)ctl.abort();},15000);
   fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload()),signal:ctl?ctl.signal:undefined})
-    .then(function(r){if(!r.ok)throw new Error('http '+r.status);S.first=S.form.name.trim().split(/\s+/)[0];S.sending=false;go('done');})
+    .then(function(r){if(!r.ok)throw new Error('http '+r.status);S.sending=false;go('done');})
     .catch(function(){S.sending=false;S.subErr='Sorry, something went wrong sending your request. Please try again, or call us on '+PHONE_TXT+'.';render();})
     .then(function(){clearTimeout(t);});
 }

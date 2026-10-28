@@ -34,6 +34,9 @@ Each flow page gets one embed element:
 <script src="gain-claim-check.js"></script>
 ```
 
+Optional: `data-webflow-form="my-form-id"` points the tool at a different
+hidden Webflow form element (default ID: `gcc-webflow-form`).
+
 | `data-flow` | Page slug |
 |---|---|
 | `motor-vehicle` | `/free-claim-check/motor-vehicle` |
@@ -45,12 +48,34 @@ Each flow page gets one embed element:
 
 The hub page `/free-claim-check` is pure Webflow design — no embed.
 
-Optional override for the submission endpoint (e.g. staging):
+### Lead capture — native Webflow form (primary path)
 
-```html
-<div id="gain-claim-check" data-flow="motor-vehicle"
-     data-endpoint="https://staging.example.com/submit"></div>
-```
+Add one **hidden native Webflow Form** to each flow page (in a hidden div or
+a section set to `display:none`), with element ID `gcc-webflow-form` and one
+field per name below. On submit the tool fills these fields and calls
+`form.requestSubmit()`, so Webflow's own handler stores the submission in
+**Site settings → Forms** and sends the standard form notification email.
+
+| Field name | Content |
+|---|---|
+| `name` | Full name (required) |
+| `phone` | Phone (required except abuse flow) |
+| `email` | Email (optional; abuse flow accepts phone OR email) |
+| `callback-time` | morning / afternoon / evening |
+| `note` | Optional free text |
+| `story` | Optional free text (medical-negligence flow only) |
+| `flow` | e.g. `motor-vehicle` |
+| `routed-out` | `yes`/`no` — user picked a non-QLD/NSW location |
+| `summary` | All answers, one "Question Answer" per line |
+| `timestamp` | ISO timestamp |
+| `page-url` | Page the lead came from |
+
+Webflow form-field names are set per input in the Designer (Field settings →
+Name). Keep them exactly as above.
+
+**Fallback:** if no `#gcc-webflow-form` element exists on the page, the tool
+POSTs JSON to `data-endpoint` (or the `ENDPOINT` constant in the JS) — useful
+for staging or a future custom endpoint.
 
 ## Design notes
 
@@ -76,7 +101,7 @@ Optional override for the submission endpoint (e.g. staging):
 - Spam: hidden honeypot field (`website`) — server should also reject
   non-empty values.
 
-## Lead payload (POST JSON)
+## Lead payload (fallback POST JSON, when no Webflow form is present)
 
 ```json
 {
@@ -101,21 +126,25 @@ Optional override for the submission endpoint (e.g. staging):
 Multi-select answers send arrays; `story` is the optional medical-negligence
 free-text box; `website` is the honeypot.
 
-## Backend status — NOT YET BUILT
+## Backend — native Webflow forms, no Lambda
 
-`ENDPOINT` in the JS is a **placeholder** (`https://claim-check.gainlawyers.com.au/submit`).
-Until the backend exists, every submit falls back to the "something went
-wrong — call 1300 11 GAIN" message.
+Decision: leads are captured by a **hidden native Webflow form** on each flow
+page — Webflow stores submissions and emails the intake inbox. No Lambda or
+custom endpoint needed for v1.
 
-Planned (per Joel): dedicated Lambda behind a subdomain — not a raw API
-Gateway URL. It should:
+Setup per page:
 
-- validate + sanitise the payload
-- CORS-allow the Gain Webflow domain(s) only
-- rate-limit + honour the honeypot
-- respond with `X-Robots-Tag: noindex, nofollow`
-- deliver the lead (intake inbox email and/or Actionstep API — still open)
-- optional confirmation email to the user (open question in the brief)
+1. Drop a Form Block on the page, name its fields per the table above, and
+   give the form element ID `gcc-webflow-form` (or set `data-webflow-form`).
+2. Wrap it in a hidden div (`display:none`) — the tool fills + submits it
+   programmatically; users never see it.
+3. Site settings → Forms → set the notification email to the intake inbox.
+4. If the hidden form is missing, the tool falls back to POSTing to
+   `data-endpoint`/`ENDPOINT` — currently a placeholder; the user then sees
+   the "something went wrong — call 1300 11 GAIN" error.
+
+Note: spam protection is Webflow's (they recommend reCAPTCHA in Site
+settings); our client-side honeypot field also stays.
 
 ## Preview
 
@@ -136,6 +165,8 @@ GitHub Pages: Settings → Pages → deploy `main` root →
 - [ ] Jeremy to decide: dedicated abuse email, National Redress Scheme note
 - [ ] Confirm DVA handling (direct vs referral) for the `other` flow
 - [ ] Footer disclaimer wording — currently drafted, needs legal sign-off
-- [ ] Lambda + subdomain, email/Actionstep delivery, confirmation email decision
+- [ ] Build the hidden Webflow form on each flow page (fields per table)
+- [ ] Site settings → Forms: set intake notification email
+- [ ] Actionstep delivery if needed later (Webflow → Zapier/Make, or revisit)
 - [ ] Behzad: page-level SEO structure, internal links, nav placement
 - [ ] Confirm `tel:` target for "1300 11 GAIN" (`1300114246`)
